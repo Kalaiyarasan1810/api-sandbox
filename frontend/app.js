@@ -1,10 +1,10 @@
-const codeInput = document.getElementById('codeInput');
-const fileInput = document.getElementById('fileInput');
-const fileName  = document.getElementById('fileName');
-const runBtn    = document.getElementById('runBtn');
-const resultsCard  = document.getElementById('resultsCard');
-const outputBox    = document.getElementById('outputBox');
-const securityBox  = document.getElementById('securityBox');
+const codeInput   = document.getElementById('codeInput');
+const fileInput   = document.getElementById('fileInput');
+const fileName    = document.getElementById('fileName');
+const runBtn      = document.getElementById('runBtn');
+const resultsCard = document.getElementById('resultsCard');
+const outputBox   = document.getElementById('outputBox');
+const securityBox = document.getElementById('securityBox');
 
 // When a file is picked, read it into the textarea
 fileInput.addEventListener('change', () => {
@@ -33,13 +33,26 @@ runBtn.addEventListener('click', async () => {
   runBtn.disabled = true;
   runBtn.textContent = '⏳ Running...';
   resultsCard.style.display = 'none';
+  outputBox.textContent   = '';
+  securityBox.textContent = '';
+
+  // NEW: AbortController lets us cancel the fetch after a timeout
+  const controller = new AbortController();
+  const timeoutId  = setTimeout(() => controller.abort(), 75000); // 75s timeout
 
   try {
     const response = await fetch('http://localhost:5000/run', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ code })
+      body: JSON.stringify({ code }),
+      signal: controller.signal   // NEW: attach abort signal
     });
+
+    clearTimeout(timeoutId);      // NEW: clear timer if response came in time
+
+    if (!response.ok) {
+      throw new Error(`Server error: ${response.status}`);
+    }
 
     const data = await response.json();
 
@@ -49,9 +62,20 @@ runBtn.addEventListener('click', async () => {
     resultsCard.style.display = 'block';
 
   } catch (err) {
-    outputBox.textContent   = '❌ Could not connect to backend.';
-    securityBox.textContent = 'Backend not running yet — coming in Phase 2!';
+    clearTimeout(timeoutId);      // NEW: always clear timer on error too
+
+    // NEW: give a specific message for timeout vs connection error
+    if (err.name === 'AbortError') {
+      outputBox.textContent = '❌ Request timed out (75s). Try a simpler snippet.';
+    } else if (err.message.includes('Failed to fetch')) {
+      outputBox.textContent = '❌ Could not connect to backend. Is Flask running?';
+    } else {
+      outputBox.textContent = `❌ Error: ${err.message}`;
+    }
+
+    securityBox.textContent = '—';
     resultsCard.style.display = 'block';
+
   } finally {
     runBtn.disabled = false;
     runBtn.textContent = '🚀 Run & Scan';
