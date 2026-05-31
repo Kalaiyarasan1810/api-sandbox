@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>API Sandbox</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="container">
+
+    <header>
+      <h1>⚡ API Sandbox</h1>
+      <p>Paste or upload your code — we'll run it and scan it instantly</p>
+    </header>
+
+    <main>
+      <!-- Code Input Section -->
+      <section class="card">
+        <h2>Your Code</h2>
+
+        <!-- Paste code here -->
+        <textarea 
+          id="codeInput" 
+          placeholder="Paste your Python code here..."></textarea>
+
+        <!-- OR upload a file -->
+        <div class="upload-row">
+          <label for="fileInput" class="upload-btn">📁 Upload File</label>
+          <input type="file" id="fileInput" accept=".py,.js,.txt" hidden />
+          <span id="fileName">No file chosen</span>
+        </div>
+
+        <!-- Submit button -->
+        <button id="runBtn">🚀 Run & Scan</button>
+      </section>
+
+      <!-- Results Section (hidden until code runs) -->
+      <section class="card" id="resultsCard" style="display:none;">
+        <h2>Results</h2>
+
+        <div class="result-block">
+          <h3>▶ Output</h3>
+          <pre id="outputBox">...</pre>
+        </div>
+
+        <div class="result-block">
+          <h3>🔒 Security Scan</h3>
+          <pre id="securityBox">...</pre>
+        </div>
+      </section>
+    </main>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

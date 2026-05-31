@@ -1,0 +1,139 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: #0f1117;
+  color: #e0e0e0;
+  min-height: 100vh;
+  padding: 40px 20px;
+}
+
+.container {
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 36px;
+}
+
+header h1 {
+  font-size: 2.2rem;
+  color: #7c6bff;
+}
+
+header p {
+  color: #888;
+  margin-top: 8px;
+}
+
+.card {
+  background: #1a1d27;
+  border: 1px solid #2a2d3e;
+  border-radius: 12px;
+  padding: 28px;
+  margin-bottom: 24px;
+}
+
+.card h2 {
+  font-size: 1.1rem;
+  color: #aaa;
+  margin-bottom: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+textarea {
+  width: 100%;
+  height: 260px;
+  background: #0f1117;
+  border: 1px solid #2a2d3e;
+  border-radius: 8px;
+  color: #e0e0e0;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  padding: 16px;
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+textarea:focus {
+  border-color: #7c6bff;
+}
+
+.upload-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.upload-btn {
+  background: #2a2d3e;
+  color: #ccc;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background 0.2s;
+}
+
+.upload-btn:hover {
+  background: #3a3d55;
+}
+
+#fileName {
+  color: #666;
+  font-size: 0.85rem;
+}
+
+#runBtn {
+  margin-top: 20px;
+  width: 100%;
+  padding: 14px;
+  background: #7c6bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+#runBtn:hover {
+  background: #6a59e0;
+}
+
+#runBtn:disabled {
+  background: #444;
+  cursor: not-allowed;
+}
+
+.result-block {
+  margin-bottom: 20px;
+}
+
+.result-block h3 {
+  font-size: 0.9rem;
+  color: #888;
+  margin-bottom: 10px;
+}
+
+pre {
+  background: #0f1117;
+  border: 1px solid #2a2d3e;
+  border-radius: 8px;
+  padding: 16px;
+  font-size: 0.85rem;
+  color: #a8ff78;
+  white-space: pre-wrap;
+  word-break: break-word;
+  min-height: 60px;
+}
