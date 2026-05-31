@@ -23,7 +23,7 @@ def scan_code(file_path):
             ],
             capture_output=True,
             text=True,
-            timeout=30          # increased from 15 to 30
+            timeout=30
         )
 
         output = result.stdout.strip()
@@ -74,14 +74,14 @@ def run_code():
                 "--network", "none",             # no internet access
                 "--memory", "128m",              # max 128MB RAM
                 "--cpus", "0.5",                 # max 50% of one CPU core
-                "--pids-limit", "50",            # NEW: prevent fork bombs
-                "-v", f"{os.path.abspath(SANDBOX_DIR)}:/code:ro",  # NEW: read-only mount
+                "--pids-limit", "50",            # prevent fork bombs
+                "-v", f"{os.path.abspath(SANDBOX_DIR)}:/code:ro",  # read-only mount
                 "sandbox-runner",
                 "python", f"/code/{file_name}"
             ],
             capture_output=True,
             text=True,
-            timeout=60          # increased from 15 to 60
+            timeout=60
         )
         output = result.stdout or result.stderr or "(no output)"
 
@@ -105,4 +105,5 @@ def health():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+    port = int(os.environ.get("PORT", 5000))   # use Railway's PORT or default to 5000
+    app.run(debug=False, host="0.0.0.0", port=port)
