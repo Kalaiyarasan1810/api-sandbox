@@ -5,7 +5,7 @@ import os
 import uuid
 
 app = Flask(__name__)
-CORS(app)  # Allows frontend to talk to backend
+CORS(app)
 
 SANDBOX_DIR = os.path.join(os.path.dirname(__file__), "sandbox")
 
@@ -13,43 +13,50 @@ SANDBOX_DIR = os.path.join(os.path.dirname(__file__), "sandbox")
 def run_code():
     data = request.get_json()
 
-    # 1. Validate input
     if not data or "code" not in data:
         return jsonify({"error": "No code provided"}), 400
 
     code = data["code"]
 
-    # 2. Save code to a temp file with a unique name
-    file_id   = str(uuid.uuid4())[:8]        # e.g. "a3f9bc12"
-    file_path = os.path.join(SANDBOX_DIR, f"{file_id}.py")
+    # 1. Save code to a temp file
+    file_id   = str(uuid.uuid4())[:8]
+    file_name = f"{file_id}.py"
+    file_path = os.path.join(SANDBOX_DIR, file_name)
 
     with open(file_path, "w") as f:
         f.write(code)
 
-    # 3. Run the code in a subprocess (isolated from main process)
+    # 2. Run inside Docker container (isolated!)
     try:
         result = subprocess.run(
-            ["python", file_path],
-            capture_output=True,    # grab stdout and stderr
-            text=True,              # return strings not bytes
-            timeout=10              # kill if it runs longer than 10 seconds
+            [
+                "docker", "run",
+                "--rm",                          # auto-remove container after run
+                "--network", "none",             # no internet access
+                "--memory", "128m",              # max 128MB RAM
+                "--cpus", "0.5",                 # max 50% of one CPU core
+                "-v", f"{os.path.abspath(SANDBOX_DIR)}:/code",  # mount sandbox folder
+                "sandbox-runner",                # our image
+                "python", f"/code/{file_name}"  # run the user's file
+            ],
+            capture_output=True,
+            text=True,
+            timeout=15
         )
         output = result.stdout or result.stderr or "(no output)"
 
     except subprocess.TimeoutExpired:
-        output = "❌ Error: Code took too long to run (10s limit)"
+        output = "❌ Error: Code took too long to run (15s limit)"
 
     except Exception as e:
         output = f"❌ Error: {str(e)}"
 
     finally:
-        # 4. Always clean up the temp file
         if os.path.exists(file_path):
             os.remove(file_path)
 
-    # 5. Return result
     return jsonify({
-        "output":   output,
+        "output": output,
         "security": "⏳ Security scan coming in Phase 4!"
     })
 

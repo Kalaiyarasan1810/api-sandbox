@@ -1,0 +1,14 @@
+# Use a lightweight Python image
+FROM python:3.11-slim
+
+# Create a non-root user (never run untrusted code as root!)
+RUN useradd -m sandboxuser
+
+# Set working directory
+WORKDIR /code
+
+# Switch to the non-root user
+USER sandboxuser
+
+# Default command — will be overridden when we pass the file
+CMD ["python", "usercode.py"]
